@@ -1,0 +1,433 @@
+basePath: /api/v1
+definitions:
+  domain.Admin:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+  domain.User:
+    properties:
+      activated:
+        type: boolean
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+    type: object
+  domain.UserActivate:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      token:
+        type: string
+    type: object
+  testing_dating_api_pkg_web_common.WebError:
+    properties:
+      err:
+        type: string
+    type: object
+  web_admin.Session:
+    properties:
+      admin:
+        $ref: '#/definitions/domain.Admin'
+      token:
+        type: string
+    type: object
+  web_admin.SignInAdmin:
+    properties:
+      login:
+        example: admin
+        maxLength: 120
+        minLength: 3
+        type: string
+      password:
+        example: password
+        maxLength: 40
+        minLength: 3
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  web_admin.UpdateUser:
+    properties:
+      name:
+        example: John Doe
+        maxLength: 120
+        minLength: 3
+        type: string
+      phone:
+        example: "79123456789"
+        maxLength: 12
+        minLength: 11
+        type: string
+    required:
+    - name
+    - phone
+    type: object
+  web_client.Session:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/domain.User'
+    type: object
+  web_client.SignInUser:
+    properties:
+      email:
+        example: example@example.com
+        maxLength: 120
+        minLength: 3
+        type: string
+      password:
+        example: password
+        maxLength: 40
+        minLength: 3
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  web_client.SignUpUser:
+    properties:
+      email:
+        example: example@example.com
+        maxLength: 120
+        minLength: 3
+        type: string
+      name:
+        example: John Doe
+        maxLength: 120
+        minLength: 3
+        type: string
+      password:
+        example: password
+        maxLength: 40
+        minLength: 3
+        type: string
+      phone:
+        example: "79123456789"
+        maxLength: 12
+        minLength: 11
+        type: string
+    required:
+    - email
+    - name
+    - password
+    - phone
+    type: object
+  web_client.UpdateUser:
+    properties:
+      name:
+        example: John Doe
+        maxLength: 120
+        minLength: 3
+        type: string
+      phone:
+        example: "79123456789"
+        maxLength: 12
+        minLength: 11
+        type: string
+    required:
+    - name
+    - phone
+    type: object
+host: localhost:8084
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Dating api backend server
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Dating API
+  version: "1.0"
+paths:
+  /admin/auth/signIn:
+    post:
+      description: Return session.
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web_admin.SignInAdmin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web_admin.Session'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+      summary: Sign-in user.
+      tags:
+      - admin
+  /admin/user/{user_id}:
+    delete:
+      description: Return nothing.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+      summary: Delete user.
+      tags:
+      - admin
+    get:
+      description: Return users.
+      parameters:
+      - default: 0
+        description: Page number
+        in: query
+        name: page
+        required: true
+        type: integer
+      - default: 25
+        description: Object count in page
+        in: query
+        name: per_page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.User'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+      summary: Get users.
+      tags:
+      - admin
+    put:
+      description: Return user.
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web_admin.UpdateUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+      summary: Update user.
+      tags:
+      - admin
+  /auth/signIn:
+    post:
+      description: Return session.
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web_client.SignInUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web_client.Session'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+      summary: Sign-in user.
+      tags:
+      - auth
+  /auth/signOut:
+    get:
+      description: Return Status OK.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+      summary: Remove user session
+      tags:
+      - auth
+  /auth/signUp:
+    post:
+      description: Return session.
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web_client.SignUpUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web_client.Session'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+        "402":
+          description: Payment Required
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+      summary: Sign-up new user.
+      tags:
+      - auth
+  /user/:
+    get:
+      description: Return user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+      summary: Get user.
+      tags:
+      - user
+    put:
+      description: Return user.
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web_client.UpdateUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+      summary: Update user.
+      tags:
+      - user
+  /user/activate:
+    get:
+      description: Return token.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.UserActivate'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+      summary: Activate user.
+      tags:
+      - user
+    post:
+      description: Return token.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/testing_dating_api_pkg_web_common.WebError'
+      summary: ActivateCode user.
+      tags:
+      - user
+swagger: "2.0"
